@@ -1,0 +1,15 @@
+Plan for NCAA model:
+
+get data for all games
+	first check through kaggle
+	otherwise i need to scrape from cbbreference and just get the box scores.  didn't i do this lat year?
+	just want data for top 50ish teams
+	
+Calculate stats from game data
+	get season wide data 
+	get last 5 games (but if i use this i need to continue using this for the model, which will make it very complicated)
+	
+Then i want to use the regular season's data as a training set for a svm or random forest model (do i make a different model for each team? if so, maybe i'll get data for last 2 years)
+	i need to learn how to extract the probabilities from these
+	then i'll put bracket into model with win probabilities to get a monte carlo simulation
+	collect stats on msot likely teams on each bracket line
