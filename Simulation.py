@@ -10,13 +10,6 @@ Then simulates the tournament and prints out results
 import pandas as pd
 import numpy as np
 from Model import make_model, prob_win
-
-
-if __name__ == '__main__':
-    bracket=pd.read_csv('bracket_16.csv')
-    team_stats=get_ye_stats(bracket, 'adv_opp_stats.csv', 'adv_stats.csv')
-    team_models=create_models(bracket,pd.read_csv('game_stats_v2.csv'))
-    simulate_tourn(bracket, team_stats, team_models, 'cons_2016_results.csv', 100)
  
 
 #==============================================================================
@@ -49,10 +42,10 @@ def get_ye_stats(bracket, stats, opp_stats):
 #==============================================================================
 # Creates model for each team.  Warning: takes several minutes
 #==============================================================================
-def create_models(bracket, game_stats):
+def create_models(bracket, game_stats, target, exclude_list):
     team_models={}   
     for team in bracket['Team']:
-        team_models[team]=make_model(team, game_stats) 
+        team_models[team]=make_model(team, game_stats, target, exclude_list) 
     return team_models
     
     
@@ -200,4 +193,11 @@ def return_rand_team(df, col):
             return index
         prob_list[index]=cum_sum
     return prob_list
+    
+    
+if __name__ == '__main__':
+    bracket=pd.read_csv('bracket_16.csv')
+    team_stats=get_ye_stats(bracket, 'adv_opp_stats.csv', 'adv_stats.csv')
+    team_models=create_models(bracket,pd.read_csv('game_stats_v2.csv'),'Win', ['Team', 'games', 'Win', 'Team_stats', 'School'])
+    simulate_tourn(bracket, team_stats, team_models, 'cons_2016_results.csv', 100)
     

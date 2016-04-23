@@ -18,23 +18,24 @@ from sklearn import grid_search
 #==============================================================================
 # Returns with the best mode for a given team
 #==============================================================================
-def make_model(team, data):
+def make_model(team, data, target, drop_list):
     #makes model for this team
     game_list=data[data['Team']==team]
-    y=np.ravel(game_list['Win'])
-    x=game_list.drop(['Team', 'games', 'Win', 'Team_stats', 'School'], axis=1)
+    y=np.ravel(game_list[target])
+    x=game_list.drop(drop_list, axis=1)
+#    x=game_list.drop(['Team', 'games', 'Win', 'Team_stats', 'School'], axis=1)
 #    print len(game_list)
-    if team=='Villanova':
-        return (29/34)
-    if team=='Kansas':
-        best_svm=-1
-    else:
-        parameters={'kernel':('linear', 'rbf', 'poly'), 'C':[0.1,.5, 1, 5,10], 'degree':[1,2,3,4]}
-        svr=SVC(probability=True)
-        svm=grid_search.GridSearchCV(svr, parameters)
-        svm=grid_search.GridSearchCV(svr, parameters)
-        svm.fit(x,y)    
-        best_svm=svm.best_score_
+#    if team=='Villanova':
+#        return (29/34)
+#    if team=='Kansas':
+#        best_svm=-1
+#    else:
+    parameters={'kernel':('linear', 'rbf', 'poly'), 'C':[0.1,.5, 1, 5,10], 'degree':[1,2,3,4]}
+    svr=SVC(probability=True)
+    svm=grid_search.GridSearchCV(svr, parameters)
+    svm=grid_search.GridSearchCV(svr, parameters)
+    svm.fit(x,y)    
+    best_svm=svm.best_score_
     parameters={'n_estimators':[5,10,20,30,40,50], 'criterion':['gini', 'entropy']}
     rfm=RandomForestClassifier()
     rfm_g=grid_search.GridSearchCV(rfm, parameters)
@@ -79,6 +80,12 @@ def ran_forest_model(x,y):
 #==============================================================================
 def prob_win(model, x_test):    
     if model.best_estimator_.classes_[0]=='W':
+        return model.predict_proba(x_test)[0][0]
+    else:
+        return model.predict_proba(x_test)[0][1]
+        
+def prob_win_kagg(model, x_test):    
+    if model.best_estimator_.classes_[0]==1:
         return model.predict_proba(x_test)[0][0]
     else:
         return model.predict_proba(x_test)[0][1]
